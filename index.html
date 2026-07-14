@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuildLab - Shopify Like Builder</title>
+  <link rel="stylesheet" href="css/tabler-icons/tabler-icons.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css';this.onerror=function(){this.href='https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.35.0/tabler-icons.min.css';};">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+
+<div id="app">
+  <div id="topbar">
+    <div class="logo">Build<span>Lab</span></div>
+    <input class="site-name" id="siteName" value="My Store" spellcheck="false" />
+    <div class="spacer"></div>
+    <button class="topbtn" onclick="saveProject()"><i class="ti ti-device-floppy"></i> Save Project</button>
+    <button class="topbtn" onclick="loadProject()"><i class="ti ti-folder-open"></i> Load Project</button>
+    <button class="topbtn" onclick="syncFromSheets()" title="Pull latest Products/Categories/Subcategories from Google Sheets"><i class="ti ti-refresh"></i> Sync from Sheet</button>
+    <button class="topbtn" onclick="previewSite()"><i class="ti ti-eye" aria-hidden="true"></i> Preview</button>
+    <button class="topbtn primary" onclick="publishSite()"><i class="ti ti-rocket" aria-hidden="true"></i> Publish</button>
+    <button class="topbtn" onclick="toggleCart(true)" style="border-color:var(--accent);color:var(--accent)"><i class="ti ti-shopping-cart" aria-hidden="true"></i> Cart (<span id="cart-count">0</span>)</button>
+  </div>
+  <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImageFile(event)" />
+  <input type="file" id="projectFileInput" accept=".json" style="display:none" onchange="handleProjectFile(event)" />
+
+  <div id="main">
+    <div id="sidebar">
+      <div id="sidebar-tabs">
+        <div class="stab active" onclick="switchTab(this,'blocks')">Blocks</div>
+        <div class="stab" onclick="switchTab(this,'products')">Products</div>
+        <div class="stab" onclick="switchTab(this,'cats')">Categories</div>
+        <div class="stab" onclick="switchTab(this,'pages')">Pages</div>
+        <div class="stab" onclick="switchTab(this,'theme')">Settings</div>
+      </div>
+      <div id="sidebar-content">
+        <div id="tab-blocks">
+          <div class="block-section">
+            <h4>Store Sections</h4>
+            <div class="block-grid">
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'product-grid')" ondblclick="addBlock('product-grid')">
+                <i class="ti ti-packages bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Products</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'product-detail')" ondblclick="addBlock('product-detail')">
+                <i class="ti ti-package bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Product Detail</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'category-grid')" ondblclick="addBlock('category-grid')">
+                <i class="ti ti-category bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Categories</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'subcategory-grid')" ondblclick="addBlock('subcategory-grid')">
+                <i class="ti ti-list-tree bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Subcategory</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'nav')" ondblclick="addBlock('nav')">
+                <i class="ti ti-layout-navbar bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Navbar</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'sidebar')" ondblclick="addBlock('sidebar')">
+                <i class="ti ti-layout-sidebar bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Sidebar</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'bottomnav')" ondblclick="addBlock('bottomnav')">
+                <i class="ti ti-apps bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Bottom Navbar</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'account')" ondblclick="addBlock('account')">
+                <i class="ti ti-user-circle bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Account</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'my-posts')" ondblclick="addBlock('my-posts')">
+                <i class="ti ti-list-details bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">My Posts</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'cart')" ondblclick="addBlock('cart')">
+                <i class="ti ti-shopping-cart bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Cart</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'users')" ondblclick="addBlock('users')">
+                <i class="ti ti-users-group bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Users</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'login')" ondblclick="addBlock('login')">
+                <i class="ti ti-login bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Login</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'signup')" ondblclick="addBlock('signup')">
+                <i class="ti ti-user-plus bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Signup</div>
+              </div>
+            </div>
+          </div>
+          <div class="block-section">
+            <h4>Layout</h4>
+            <div class="block-grid">
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'hero')" ondblclick="addBlock('hero')">
+                <i class="ti ti-layout-rows bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Hero</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'columns')" ondblclick="addBlock('columns')">
+                <i class="ti ti-columns bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Columns</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'gallery')" ondblclick="addBlock('gallery')">
+                <i class="ti ti-carousel-horizontal bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Gallery</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'promo-tiles')" ondblclick="addBlock('promo-tiles')">
+                <i class="ti ti-layout-grid bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Promo Tiles</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'footer')" ondblclick="addBlock('footer')">
+                <i class="ti ti-layout-bottombar bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Footer</div>
+              </div>
+            </div>
+          </div>
+          <div class="block-section">
+            <h4>Content</h4>
+            <div class="block-grid">
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'text')" ondblclick="addBlock('text')">
+                <i class="ti ti-text-size bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Text</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'image')" ondblclick="addBlock('image')">
+                <i class="ti ti-photo bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Image</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'video-player')" ondblclick="addBlock('video-player')">
+                <i class="ti ti-player-play bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Video Player</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'video-grid')" ondblclick="addBlock('video-grid')">
+                <i class="ti ti-layout-grid bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Videos Grid</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'scroll-sequence')" ondblclick="addBlock('scroll-sequence')">
+                <i class="ti ti-movie bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Scroll Sequence</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'cta')" ondblclick="addBlock('cta')">
+                <i class="ti ti-hand-finger bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">CTA</div>
+              </div>
+              <div class="block-item" draggable="true" ondragstart="startDrag(event,'upload')" ondblclick="addBlock('upload')">
+                <i class="ti ti-cloud-upload bi-icon" aria-hidden="true"></i>
+                <div class="bi-label">Upload</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="tab-products" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-size:12px;font-weight:500">Inventory</span>
+            <button onclick="addMockProduct()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-secondary)">+ Add</button>
+          </div>
+          <div id="products-list"></div>
+        </div>
+
+        <div id="tab-cats" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-size:12px;font-weight:500">Categories</span>
+            <button onclick="addCategory()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-secondary)">+ Add</button>
+          </div>
+          <div id="cats-list"></div>
+          
+          <div style="margin-top:20px; display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-size:12px;font-weight:500">Subcategories</span>
+            <button onclick="addSubcategory()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-secondary)">+ Add</button>
+          </div>
+          <div id="subcats-list"></div>
+        </div>
+
+        <div id="tab-pages" style="display:none">
+          <div style="margin-bottom:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span style="font-size:12px;font-weight:500">Pages</span>
+              <button onclick="addPage()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-secondary)">+ Add</button>
+            </div>
+            <div id="pages-list"></div>
+          </div>
+        </div>
+
+        <div id="tab-theme" style="display:none">
+          <div class="prop-group">
+            <div class="prop-label">Accent color</div>
+            <div class="color-row" id="theme-colors"></div>
+          </div>
+          <div class="prop-group">
+            <div class="prop-label">Font</div>
+            <select class="prop-input" onchange="setThemeFont(this.value)">
+              <option>System default</option>
+              <option>Serif</option>
+              <option>Monospace</option>
+            </select>
+          </div>
+          <div class="prop-group">
+            <div class="prop-label">Currency symbol</div>
+            <input type="text" class="prop-input" id="currency-symbol-input" maxlength="6" placeholder="$" oninput="updateCurrencySymbol(this.value)" />
+          </div>
+          <div class="prop-group">
+            <div class="prop-label">Symbol position</div>
+            <select class="prop-input" id="currency-position-input" onchange="updateCurrencyPosition(this.value)">
+              <option value="prefix">Before amount ($100.00)</option>
+              <option value="suffix">After amount (100.00$)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resize-left" class="resize-handle"></div>
+    <div id="canvas-wrap">
+      <div id="canvas-toolbar">
+        <div style="flex:1"></div>
+        <button class="vp-btn" onclick="undoLast()" title="Undo"><i class="ti ti-arrow-back-up" aria-hidden="true"></i></button>
+        <button class="vp-btn active" onclick="setViewport('desktop',this)"><i class="ti ti-device-desktop" aria-hidden="true"></i> Desktop</button>
+        <button class="vp-btn" onclick="setViewport('tablet',this)"><i class="ti ti-device-tablet" aria-hidden="true"></i> Tablet</button>
+        <button class="vp-btn" onclick="setViewport('mobile',this)"><i class="ti ti-device-mobile" aria-hidden="true"></i> Mobile</button>
+      </div>
+      <div id="canvas-scroll" ondragover="event.preventDefault()" ondrop="dropBlock(event)">
+        <div id="canvas">
+          <div id="empty-hint">
+            <i class="ti ti-layout-grid-add" aria-hidden="true"></i>
+            <p>Drag blocks here<br>or double-click in the sidebar</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resize-right" class="resize-handle"></div>
+    <div id="props">
+      <div id="props-header">Properties</div>
+      <div id="props-body">
+        <div id="no-selection">Select a block or product to edit</div>
+        <div id="props-fields" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="statusbar">
+    <div class="status-dot"></div>
+    <span class="status-text" id="statusMsg">Ready</span>
+    <span class="block-count" id="blockCount">0 blocks</span>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div id="preview-modal" onclick="if(event.target===this)closePreview()">
+  <div id="preview-content">
+    <button class="preview-close-btn" onclick="closePreview()">&times;</button>
+    <div id="preview-body"></div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div id="confirm-modal" onclick="if(event.target===this)cancelConfirm()">
+  <div id="confirm-modal-box">
+    <div id="confirm-modal-icon"><i class="ti ti-alert-triangle"></i></div>
+    <div id="confirm-modal-title">Delete this item?</div>
+    <div id="confirm-modal-msg">This action cannot be undone.</div>
+    <div id="confirm-modal-actions">
+      <button class="topbtn" onclick="cancelConfirm()">Cancel</button>
+      <button class="topbtn" id="confirm-modal-confirm-btn" onclick="confirmModalAction()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div id="cart-overlay" onclick="toggleCart(false)"></div>
+<div id="cart-drawer">
+  <div class="cart-header">
+    <span>Your Cart</span>
+    <button class="cart-close" onclick="toggleCart(false)">&times;</button>
+  </div>
+  <div class="cart-items" id="cart-items-container">
+    <div class="cart-empty">Your cart is empty</div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Subtotal</span>
+      <span id="cart-total-price">$0.00</span>
+    </div>
+    <button class="cart-checkout-btn" onclick="checkout()">Checkout</button>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+
+<script>
+(function() {
+  const root = document.documentElement;
+
+  // Restore saved sizes
+  const savedSidebar = localStorage.getItem('bl-sidebar-width');
+  const savedProps   = localStorage.getItem('bl-props-width');
+  if (savedSidebar) root.style.setProperty('--sidebar', savedSidebar);
+  if (savedProps)   document.getElementById('props').style.width = savedProps;
+
+  function makeResizer(handleId, onDrag) {
+    const handle = document.getElementById(handleId);
+    let dragging = false;
+
+    handle.addEventListener('mousedown', e => {
+      dragging = true;
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      onDrag(e.clientX);
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    });
+  }
+
+  // Left handle — resizes sidebar
+  makeResizer('resize-left', (x) => {
+    const min = 180, max = 400;
+    const w = Math.min(max, Math.max(min, x));
+    root.style.setProperty('--sidebar', w + 'px');
+    localStorage.setItem('bl-sidebar-width', w + 'px');
+  });
+
+  // Right handle — resizes props panel
+  makeResizer('resize-right', (x) => {
+    const min = 200, max = 480;
+    const w = Math.min(max, Math.max(min, window.innerWidth - x));
+    document.getElementById('props').style.width = w + 'px';
+    localStorage.setItem('bl-props-width', w + 'px');
+  });
+})();
+</script>
+</body>
+</html>
